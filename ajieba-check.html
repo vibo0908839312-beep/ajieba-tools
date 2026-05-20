@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭財務缺口診斷表｜阿杰AJie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A050;--gold-dim:#7a6535;
+  --bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;
+  --text:#F5F0E8;--text-muted:#9a9080;--red:#c0392b;
+}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;-webkit-text-size-adjust:100%;min-height:100vh}
+.wrap{width:100%;max-width:600px;margin:0 auto;padding:0}
+
+.header{padding:28px 20px 22px}
+.eyebrow{color:var(--gold);font-size:11px;font-weight:500;letter-spacing:.12em;margin-bottom:10px}
+.h-title{font-family:'Noto Serif TC',serif;font-size:26px;font-weight:700;line-height:1.3;color:var(--text)}
+.h-title em{color:var(--gold);font-style:normal;text-decoration:line-through;text-decoration-color:var(--red)}
+.h-sub{font-size:13px;color:var(--text-muted);margin-top:8px;line-height:1.65}
+
+.progress-bar{height:3px;background:#1e1e1e;margin:0 20px}
+.progress-fill{height:100%;background:var(--gold);transition:width .35s ease;width:0%}
+
+.counter-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #181818}
+.c-num{font-family:'Noto Serif TC',serif;font-size:34px;font-weight:700;color:var(--gold)}
+.c-denom{font-size:14px;color:var(--text-muted)}
+.c-label{font-size:11px;color:var(--text-muted);margin-top:2px}
+.gap-count{font-size:12px;font-weight:500;padding:5px 12px;border:1px solid #333;border-radius:4px;color:var(--text-muted)}
+.gap-count.has-gap{border-color:#5a2020;color:#e07070;background:#120808}
+.gap-count.no-gap{border-color:#1e3a1e;color:#70c070;background:#081208}
+
+.hint{font-size:12px;color:#444;text-align:center;padding:10px 0 4px}
+
+.section{padding:18px 20px 4px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sec-n{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:700;color:var(--gold);opacity:.28;line-height:1}
+.sec-t{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;color:var(--text)}
+
+.items{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.item{display:flex;align-items:flex-start;gap:11px;padding:12px 14px;background:var(--surface);border:1px solid #1e1e1e;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .2s,background .2s;user-select:none}
+.item.checked{border-color:var(--gold);background:#0e0c07}
+.item.gap-highlight{border-color:#5a2020;background:#0e0707}
+.chk{width:20px;height:20px;min-width:20px;border:1.5px solid #3a3a3a;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:12px;font-weight:700;color:#0a0a0a;transition:all .2s;flex-shrink:0}
+.item.checked .chk{background:var(--gold);border-color:var(--gold)}
+.item.checked .chk::after{content:'✓'}
+.item.gap-highlight .chk{border-color:#5a2020}
+.item-text{font-size:13px;color:var(--text);line-height:1.6}
+.item.checked .item-text{color:var(--text-muted)}
+.badge{font-size:10px;padding:1px 6px;border-radius:3px;margin-left:4px;font-weight:500;vertical-align:middle;display:inline-block}
+.b-warn{background:#1a0808;color:#d07070;border:1px solid #3a1818}
+.b-info{background:#0f0d00;color:var(--gold);border:1px solid #3a2d00}
+
+.divider{border:none;border-top:1px solid #161616;margin:0 20px}
+
+.diag-block{margin:18px 20px 0;display:none}
+.diag-block.show{display:block}
+.diag-title{font-family:'Noto Serif TC',serif;font-size:15px;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.diag-title::before{content:'';display:block;width:3px;height:16px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.gap-cards{display:flex;flex-direction:column;gap:7px}
+.gap-card{padding:12px 14px;border-radius:6px;border-left:3px solid var(--red);background:#0e0707}
+.gap-card-label{font-size:10px;color:#d07070;font-weight:500;margin-bottom:4px;letter-spacing:.05em}
+.gap-card-text{font-size:13px;color:#e8dcd8;line-height:1.55}
+.gap-card-action{font-size:11px;color:var(--text-muted);margin-top:6px;padding-top:6px;border-top:1px solid #2a1a1a}
+.all-good{padding:12px 14px;border-radius:6px;border-left:3px solid #2d6a2d;background:#070e07}
+.all-good-text{font-size:13px;color:#a0d0a0;line-height:1.6}
+
+.empathy{margin:14px 20px 0;padding:14px 16px;border-radius:6px;background:#0f0d08;border:1px solid #252010}
+.empathy-text{font-size:13px;color:var(--text-muted);line-height:1.75}
+.empathy-text strong{color:var(--text);font-weight:500}
+
+.cta-block{margin:14px 20px 0;padding:18px;background:var(--surface2);border-radius:8px;border:1px solid #252525}
+.cta-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.step-num{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:700;color:var(--gold);opacity:.5;line-height:1.2;min-width:18px}
+.step-text{font-size:13px;color:var(--text);line-height:1.6}
+.step-text em{color:var(--gold);font-style:normal;font-weight:500}
+.step-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.cta-divider{border:none;border-top:1px solid #2a2a2a;margin:14px 0}
+.cta-hero{text-align:center}
+.cta-hero-text{font-family:'Noto Serif TC',serif;font-size:16px;color:var(--text);margin-bottom:5px}
+.cta-hero-sub{font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.6}
+.cta-btn{display:block;width:100%;background:var(--gold);color:#0a0a0a;font-size:14px;font-weight:700;font-family:'Noto Serif TC',serif;padding:14px 20px;border-radius:4px;border:none;cursor:pointer;letter-spacing:.04em;text-decoration:none;text-align:center}
+
+.notice-block{margin:18px 20px 0}
+.red-line{border:none;border-top:1px solid var(--red);margin-bottom:8px}
+.notice-text{font-size:10px;color:#555;line-height:1.7}
+
+.brand-bar{display:flex;justify-content:flex-end;padding:14px 20px 32px}
+.brand-text{font-size:11px;color:var(--gold-dim);font-weight:500;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="eyebrow">FAMILY FINANCIAL GAP DIAGNOSIS</div>
+    <div class="h-title">家庭財務<em>缺口</em>診斷表</div>
+    <div class="h-sub">把有把握的項目打勾，沒有把握的不要勾——誠實面對，才能找到真正的問題</div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+  <div class="counter-row">
+    <div>
+      <div><span class="c-num" id="c-num">0</span><span class="c-denom"> / 20</span></div>
+      <div class="c-label">項目已確認</div>
+    </div>
+    <div class="gap-count" id="gap-badge">尚未開始</div>
+  </div>
+
+  <div class="hint">↓ 誠實勾選，結果才有意義</div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-n">01</div><div class="sec-t">保費比例是否合理</div></div>
+    <div class="items">
+      <div class="item" data-sec="1" data-gap="不清楚全家一年繳了多少保費" onclick="tog(this)"><div class="chk"></div><div class="item-text">我知道全家每年總共繳了多少保費（含儲蓄險）<span class="badge b-info">基礎題</span></div></div>
+      <div class="item" data-sec="1" data-gap="家庭保費佔年收入超過合理比例" onclick="tog(this)"><div class="chk"></div><div class="item-text">全家保費合計未超過年收入的 15%</div></div>
+      <div class="item" data-sec="1" data-gap="孩子保費高於主要收入者，比例失衡" onclick="tog(this)"><div class="chk"></div><div class="item-text">孩子的年保費未高於主要收入者的年保費<span class="badge b-warn">常見陷阱</span></div></div>
+      <div class="item" data-sec="1" data-gap="儲蓄險比例過高，真正保障不足" onclick="tog(this)"><div class="chk"></div><div class="item-text">儲蓄險佔總保費比例低於 50%</div></div>
+      <div class="item" data-sec="1" data-gap="不清楚保單解約損失，可能被套牢" onclick="tog(this)"><div class="chk"></div><div class="item-text">我清楚每張保單的繳費年期與提前解約的損失</div></div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-n">02</div><div class="sec-t">保障缺口在哪裡</div></div>
+    <div class="items">
+      <div class="item" data-sec="2" data-gap="主要收入者壽險保額不足，家人生活缺乏緩衝" onclick="tog(this)"><div class="chk"></div><div class="item-text">主要收入者壽險保額足夠（建議 ≥ 年收入 × 10）</div></div>
+      <div class="item" data-sec="2" data-gap="沒有失能保障——台灣家庭最常見、最危險的缺口" onclick="tog(this)"><div class="chk"></div><div class="item-text">有失能或失業收入保障，不只依賴「死亡才賠」的壽險<span class="badge b-warn">高危缺口</span></div></div>
+      <div class="item" data-sec="2" data-gap="醫療實支實付不足，自費醫療可能壓垮現金流" onclick="tog(this)"><div class="chk"></div><div class="item-text">有實支實付醫療險，且住院日額 ≥ 2,000 元</div></div>
+      <div class="item" data-sec="2" data-gap="重大傷病保障缺口，治療期間收入中斷風險高" onclick="tog(this)"><div class="chk"></div><div class="item-text">重大傷病或癌症一次金保障已納入規劃</div></div>
+      <div class="item" data-sec="2" data-gap="說不清楚保單賠什麼，等於不知道自己有沒有保障" onclick="tog(this)"><div class="chk"></div><div class="item-text">我能說出每張保單「什麼情況賠、賠多少」</div></div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-n">03</div><div class="sec-t">現金流有沒有被壓垮</div></div>
+    <div class="items">
+      <div class="item" data-sec="3" data-gap="保費壓縮了儲蓄空間，財務彈性不足" onclick="tog(this)"><div class="chk"></div><div class="item-text">扣除保費後，每月仍能存下收入的 10% 以上</div></div>
+      <div class="item" data-sec="3" data-gap="緊急預備金不足，突發狀況可能被迫動用投資或借貸" onclick="tog(this)"><div class="chk"></div><div class="item-text">家庭有 3–6 個月的流動緊急預備金</div></div>
+      <div class="item" data-sec="3" data-gap="停收入後保費與房貸同時成為壓力" onclick="tog(this)"><div class="chk"></div><div class="item-text">即使停止工作 6 個月，房貸與保費仍能正常繳交<span class="badge b-warn">壓力測試</span></div></div>
+      <div class="item" data-sec="3" data-gap="負債比例偏高，財務抗壓空間有限" onclick="tog(this)"><div class="chk"></div><div class="item-text">家庭月攤還額（含房貸）未超過月收入的 40%</div></div>
+      <div class="item" data-sec="3" data-gap="不知道哪些保單可以釋放現金流，選擇權在別人手裡" onclick="tog(this)"><div class="chk"></div><div class="item-text">我知道哪幾張保單若重新調整，可以釋放現金流</div></div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-n">04</div><div class="sec-t">家庭財務安全感夠不夠</div></div>
+    <div class="items">
+      <div class="item" data-sec="4" data-gap="配偶不知道保單在哪、怎麼申請——緊急時刻最危險" onclick="tog(this)"><div class="chk"></div><div class="item-text">配偶知道所有保單放在哪、如何申請理賠</div></div>
+      <div class="item" data-sec="4" data-gap="因為不好意思才繼續繳——情感綁架了財務決策" onclick="tog(this)"><div class="chk"></div><div class="item-text">每張保單是經過評估選擇，不是因為不好意思拒絕<span class="badge b-warn">情感決策</span></div></div>
+      <div class="item" data-sec="4" data-gap="一旦無法工作，家人生活可能立即陷入困難" onclick="tog(this)"><div class="chk"></div><div class="item-text">如果明天我無法工作，家人的生活不會立刻出現危機</div></div>
+      <div class="item" data-sec="4" data-gap="保障沒有隨家庭變化更新，可能不匹配現況" onclick="tog(this)"><div class="chk"></div><div class="item-text">我有定期（每 1–2 年）重新檢視家庭保障的習慣</div></div>
+      <div class="item" data-sec="4" data-gap="對家庭財務配置缺乏把握，安全感來自「不想去想」" onclick="tog(this)"><div class="chk"></div><div class="item-text">我對目前的家庭財務配置感到有把握、有安全感</div></div>
+    </div>
+  </div>
+
+  <div class="diag-block" id="diag">
+    <div class="diag-title">你的缺口診斷</div>
+    <div class="gap-cards" id="gap-cards"></div>
+  </div>
+
+  <div class="empathy" id="empathy" style="display:none">
+    <div class="empathy-text" id="empathy-text"></div>
+  </div>
+
+  <div class="cta-block">
+    <div class="cta-step">
+      <div class="step-num">1</div>
+      <div><div class="step-text"><em>截圖這份診斷結果</em></div><div class="step-sub">把你沒有勾到的項目一起截進去</div></div>
+    </div>
+    <div class="cta-step">
+      <div class="step-num">2</div>
+      <div><div class="step-text">私訊傳給阿杰 <em>@ajieba.homelife</em></div><div class="step-sub">不需要解釋，直接傳截圖就好</div></div>
+    </div>
+    <div class="cta-step">
+      <div class="step-num">3</div>
+      <div><div class="step-text">我告訴你<em>哪個缺口最需要優先處理</em></div><div class="step-sub">免費 20 分鐘，不賣保單，只幫你看清楚</div></div>
+    </div>
+    <div class="cta-divider"></div>
+    <div class="cta-hero">
+      <div class="cta-hero-text">你不一定需要重買，但你一定要先看懂</div>
+      <div class="cta-hero-sub">截圖 + 私訊，20 分鐘，我陪你看清楚</div>
+      <a class="cta-btn" href="https://www.instagram.com/ajieba.homelife?igsh=MTQxa3pka2J4cG02Zg%3D%3D&utm_source=qr" target="_blank" rel="noopener">私訊阿杰 @ajieba.homelife ↗</a>
+    </div>
+  </div>
+
+  <div class="notice-block">
+    <hr class="red-line">
+    <div class="notice-text">本診斷表僅供家庭財務自我評估參考，不構成任何保險建議或投資建議。每個家庭狀況不同，實際規劃請諮詢合格專業人員。阿杰AJie非台灣保險業務員，不代任何保險公司銷售商品。</div>
+  </div>
+
+  <div class="brand-bar"><div class="brand-text">阿杰AJie · 家庭財富進化師</div></div>
+</div>
+
+<script>
+const items=document.querySelectorAll('.item');
+const progEl=document.getElementById('prog');
+const cNumEl=document.getElementById('c-num');
+const gBadge=document.getElementById('gap-badge');
+const diagEl=document.getElementById('diag');
+const gCards=document.getElementById('gap-cards');
+const empEl=document.getElementById('empathy');
+const empTxt=document.getElementById('empathy-text');
+
+function tog(el){
+  el.classList.toggle('checked');
+  if(!el.classList.contains('checked')) el.classList.remove('gap-highlight');
+  render();
+}
+
+function render(){
+  const checked=document.querySelectorAll('.item.checked').length;
+  const gaps=[...items].filter(i=>!i.classList.contains('checked'));
+  const gapCount=gaps.length;
+
+  progEl.style.width=(checked/20*100)+'%';
+  cNumEl.textContent=checked;
+
+  if(checked===0){gBadge.className='gap-count';gBadge.textContent='尚未開始';}
+  else if(gapCount===0){gBadge.className='gap-count no-gap';gBadge.textContent='沒有明顯缺口';}
+  else{gBadge.className='gap-count has-gap';gBadge.textContent='發現 '+gapCount+' 個缺口';}
+
+  items.forEach(i=>{
+    if(!i.classList.contains('checked')&&checked>=5) i.classList.add('gap-highlight');
+    else i.classList.remove('gap-highlight');
+  });
+
+  if(checked<5){diagEl.classList.remove('show');empEl.style.display='none';return;}
+  diagEl.classList.add('show');empEl.style.display='block';
+
+  const secLabels={1:'保費比例',2:'保障缺口',3:'現金流',4:'安全感'};
+  const secActions={
+    1:'先把全家保費清單列出來，確認佔收入比例',
+    2:'失能與壽險缺口影響最大，建議優先確認',
+    3:'緊急預備金與停收入壓力測試是現金流底線',
+    4:'讓配偶了解保單內容，是家庭最基本的保護'
+  };
+
+  gCards.innerHTML='';
+  if(gapCount===0){
+    gCards.innerHTML='<div class="all-good"><div class="all-good-text">所有項目都確認了——你的家庭財務防護相當完整。建議每 1–2 年定期重新檢視。</div></div>';
+  } else {
+    gaps.forEach(g=>{
+      const s=g.dataset.sec;
+      const c=document.createElement('div');
+      c.className='gap-card';
+      c.innerHTML='<div class="gap-card-label">缺口 · '+secLabels[s]+'</div><div class="gap-card-text">'+g.dataset.gap+'</div><div class="gap-card-action">→ '+secActions[s]+'</div>';
+      gCards.appendChild(c);
+    });
+  }
+
+  let et='';
+  if(gapCount===0) et='你已經做得很好了。很多家庭連保費總額都說不清楚，能走到這一步需要時間和用心。';
+  else if(gapCount<=5) et='<strong>有幾個缺口，但這很正常。</strong>大多數家庭在第一次認真看保單之前，都會發現類似的問題——不是你做錯了什麼，只是你還沒有人幫你看清楚。';
+  else if(gapCount<=10) et='<strong>缺口比你想像的多，但不代表你不負責任。</strong>我們太常因為信任熟人、因為不好意思、因為聽不懂條款，就把家庭風險交給別人決定。現在開始看，還不晚。';
+  else et='<strong>超過一半的項目還沒有把握——這需要認真面對。</strong>你願意勾完這份表，就已經是第一步了。';
+  empTxt.innerHTML=et;
+}
+</script>
+</body>
+</html>
